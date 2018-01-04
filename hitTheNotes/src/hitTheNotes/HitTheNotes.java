@@ -25,6 +25,9 @@ public class HitTheNotes extends JFrame {
 			
 			//메인 클래스 위치를 기반으로 해서 이미지 변수에 jpg 이미지를 담아줌
 			introBackground = new ImageIcon(Main.class.getResource("../images/intro.jpg")).getImage();
+			
+			Music introMusic = new Music("introMusic.mp3", true);
+			introMusic.start();
 		}
 		
 		public void paint(Graphics g) {

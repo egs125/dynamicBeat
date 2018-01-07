@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,9 +34,6 @@ public class HitTheNotes extends JFrame {
 	
 	//백그라운드 이미지를 담는 인스턴스. 메인 클래스 위치를 기반으로 해서 이미지 변수에 jpg 이미지를 담아줌
 	private Image background = new ImageIcon(Main.class.getResource("../images/intro.jpg")).getImage();
-	private Image titleImage = new ImageIcon(Main.class.getResource("../images/Mighty Love Title Image.png")).getImage();
-	private Image selectedImage = new ImageIcon(Main.class.getResource("../images/Mighty Love Start Image.png"))
-			.getImage();
 	
 	private JLabel menuBar = new JLabel(new ImageIcon(Main.class.getResource("../images/menuBar.png")));
 
@@ -50,6 +48,13 @@ public class HitTheNotes extends JFrame {
 		
 	private boolean isMainScreen = false;
 	
+	ArrayList<Track> trackList = new ArrayList<Track>();
+	
+	private Image titleImage;
+	private Image selectedImage;
+	private Music selectedMusic;
+	private int nowSelected = 0;
+	
 	public HitTheNotes() {
 		
 		setUndecorated(true);
@@ -61,15 +66,24 @@ public class HitTheNotes extends JFrame {
 		setVisible(true);
 		setBackground(new Color(0, 0, 0, 0));
 		setLayout(null);
-				
-		setSize(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
-		setResizable(false);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
-		setBackground(new Color(0, 0, 0, 0));
-		setLayout(null);
+	
+		//프로그램 시작 시 배경음 삽입
+		Music introMusic = new Music("introMusic.mp3", true);
+		introMusic.start();
+		
+		//선택 가능한 음악 목록 생성
+		trackList.add(new Track("Mighty Love Title Image.png", "Mighty Love Start Image.png",
+								"Mighty Love Game Image.png", "Mighty Love Selected.mp3", 
+								"Joakim Karud - Mighty Love.mp3"));
+		trackList.add(new Track("Wild Flower Title Image.png", "Wild Flower Start Image.png",
+								"Wild Flower Game Image.png", "Wild Flower Selected.mp3", 
+								"Joakim Karud - Wild Flower.mp3"));
+		trackList.add(new Track("Energy Title Image.png", "Energy Start Image.png",
+								"Energy Game Image.png", "Energy Selected.mp3", 
+								"Bensound - Energy.mp3"));
+		
 
+		//메뉴바 상단의 닫기 버튼 추가
 		exitButton.setBounds(1245, 0, 30, 30);
 		exitButton.setBorderPainted(false);
 		exitButton.setContentAreaFilled(false);
@@ -101,6 +115,26 @@ public class HitTheNotes extends JFrame {
 		});
 		add(exitButton);
 		
+		//상단 메뉴바 추가
+		menuBar.setBounds(0, 0, 1280, 30);
+		menuBar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				mouseX = e.getX();
+				mouseY = e.getY();
+			}
+		});
+		menuBar.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				int x = e.getXOnScreen();
+				int y = e.getYOnScreen();
+				setLocation(x - mouseX, y - mouseY);
+			}
+		});
+		add(menuBar);
+		
+		//시작하기 버튼 추가
 		startButton.setBounds(40, 200, 400, 100);
 		startButton.setBorderPainted(false);
 		startButton.setContentAreaFilled(false);
@@ -122,10 +156,14 @@ public class HitTheNotes extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false);
 				buttonEnteredMusic.start();
+				
+				introMusic.close(); //프로그램 시작 시 실행된 음악 종료
+
 				startButton.setVisible(false);
 				quitButton.setVisible(false);
 				leftButton.setVisible(true);
 				rightButton.setVisible(true);
+				selectTrack(0);
 				background = new ImageIcon(Main.class.getResource("../images/mainBackground.jpg"))
 						.getImage();
 				isMainScreen = true;
@@ -133,6 +171,7 @@ public class HitTheNotes extends JFrame {
 		});
 		add(startButton);
 		
+		//종료하기 버튼 추가
 		quitButton.setBounds(40, 330, 400, 100);
 		quitButton.setBorderPainted(false);
 		quitButton.setContentAreaFilled(false);
@@ -164,6 +203,7 @@ public class HitTheNotes extends JFrame {
 		});
 		add(quitButton);
 		
+		//음악선택 왼쪽 버튼 추가
 		leftButton.setVisible(false);
 		leftButton.setBounds(140, 310, 60, 60);
 		leftButton.setBorderPainted(false);
@@ -186,11 +226,12 @@ public class HitTheNotes extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false);
 				buttonEnteredMusic.start();
-
+				selectLeft();
 			}
 		});
 		add(leftButton);
 		
+		//음악 선택 오른쪽 추가
 		rightButton.setVisible(false);
 		rightButton.setBounds(1080, 310, 60, 60);
 		rightButton.setBorderPainted(false);
@@ -213,31 +254,11 @@ public class HitTheNotes extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false);
 				buttonEnteredMusic.start();
-				
+				selectRight();
 			}
 		});
 		add(rightButton);
-		
-		menuBar.setBounds(0, 0, 1280, 30);
-		menuBar.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				mouseX = e.getX();
-				mouseY = e.getY();
-			}
-		});
-		menuBar.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				int x = e.getXOnScreen();
-				int y = e.getYOnScreen();
-				setLocation(x - mouseX, y - mouseY);
-			}
-		});
-		add(menuBar);
-
-		Music introMusic = new Music("introMusic.mp3", true);
-		introMusic.start();
+			
 	}
 		
 	public void paint(Graphics g) {
@@ -258,5 +279,33 @@ public class HitTheNotes extends JFrame {
 		
 		paintComponents(g); //메인프레임에 추가된 요소들을 보여줌(add 사용)
 		this.repaint();
+	}
+	
+	//음악 선택 시 처리 함수
+	public void selectTrack(int nowSelected) {
+		if(selectedMusic != null)
+			selectedMusic.close();
+		titleImage = new ImageIcon(Main.class.getResource("../images/" + trackList.get(nowSelected).getTitleImage())).getImage();
+		selectedImage = new ImageIcon(Main.class.getResource("../images/" + trackList.get(nowSelected).getStartImage())).getImage();
+		selectedMusic = new Music(trackList.get(nowSelected).getStartMusic(), true);
+		selectedMusic.start();
+	}
+	
+	//왼쪽 버튼 클릭 시 처리 함수
+	public void selectLeft() {
+		if(nowSelected == 0)
+			nowSelected = trackList.size() - 1;
+		else
+			nowSelected--;
+		selectTrack(nowSelected);
+	}
+	
+	//오른쪽 버튼 클릭 시 처리 함수
+	public void selectRight() {
+		if(nowSelected == trackList.size() - 1)
+			nowSelected = 0;
+		else
+			nowSelected++;
+		selectTrack(nowSelected);
 	}
 }

@@ -32,6 +32,11 @@ public class HitTheNotes extends JFrame {
 	private ImageIcon rightButtonEnteredImage = new ImageIcon(Main.class.getResource("../images/rightButtonEntered.png"));
 	private ImageIcon rightButtonBasicImage = new ImageIcon(Main.class.getResource("../images/rightButtonBasic.png"));
 	
+	private ImageIcon easyButtonEnteredImage = new ImageIcon(Main.class.getResource("../images/easyButtonEntered.png"));
+	private ImageIcon easyButtonBasicImage = new ImageIcon(Main.class.getResource("../images/easyButtonBasic.png"));
+	private ImageIcon hardButtonEnteredImage = new ImageIcon(Main.class.getResource("../images/hardButtonEntered.png"));
+	private ImageIcon hardButtonBasicImage = new ImageIcon(Main.class.getResource("../images/hardButtonBasic.png"));
+	
 	//백그라운드 이미지를 담는 인스턴스. 메인 클래스 위치를 기반으로 해서 이미지 변수에 jpg 이미지를 담아줌
 	private Image background = new ImageIcon(Main.class.getResource("../images/intro.jpg")).getImage();
 	
@@ -43,6 +48,9 @@ public class HitTheNotes extends JFrame {
 	
 	private JButton leftButton = new JButton(leftButtonBasicImage);
 	private JButton rightButton = new JButton(rightButtonBasicImage);
+
+	private JButton easyButton = new JButton(easyButtonBasicImage);
+	private JButton hardButton = new JButton(hardButtonBasicImage);
 	
 	private int mouseX, mouseY;
 		
@@ -73,13 +81,13 @@ public class HitTheNotes extends JFrame {
 		
 		//선택 가능한 음악 목록 생성
 		trackList.add(new Track("Mighty Love Title Image.png", "Mighty Love Start Image.png",
-								"Mighty Love Game Image.png", "Mighty Love Selected.mp3", 
+								"Mighty Love Game Image.jpg", "Mighty Love Selected.mp3", 
 								"Joakim Karud - Mighty Love.mp3"));
 		trackList.add(new Track("Wild Flower Title Image.png", "Wild Flower Start Image.png",
-								"Wild Flower Game Image.png", "Wild Flower Selected.mp3", 
+								"Wild Flower Game Image.jpg", "Wild Flower Selected.mp3", 
 								"Joakim Karud - Wild Flower.mp3"));
 		trackList.add(new Track("Energy Title Image.png", "Energy Start Image.png",
-								"Energy Game Image.png", "Energy Selected.mp3", 
+								"Energy Game Image.jpg", "Energy Selected.mp3", 
 								"Bensound - Energy.mp3"));
 		
 
@@ -161,10 +169,15 @@ public class HitTheNotes extends JFrame {
 
 				startButton.setVisible(false);
 				quitButton.setVisible(false);
+				
 				leftButton.setVisible(true);
 				rightButton.setVisible(true);
+				
+				easyButton.setVisible(true);
+				hardButton.setVisible(true);
+				
 				selectTrack(0);
-				background = new ImageIcon(Main.class.getResource("../images/mainBackground.jpg"))
+				background = new ImageIcon(Main.class.getResource("../images/mainBackground2.jpg"))
 						.getImage();
 				isMainScreen = true;
 			}
@@ -259,6 +272,63 @@ public class HitTheNotes extends JFrame {
 		});
 		add(rightButton);
 			
+		//난이도 조절 - easy 버튼 추가
+		easyButton.setVisible(false);
+		easyButton.setBounds(375, 580, 250, 67);
+		easyButton.setBorderPainted(false);
+		easyButton.setContentAreaFilled(false);
+		easyButton.setFocusPainted(false);
+		easyButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				easyButton.setIcon(easyButtonEnteredImage);
+				easyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				Music buttonEnteredMusic = new Music("buttonEnteredMusic.mp3", false);
+				buttonEnteredMusic.start();
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				easyButton.setIcon(easyButtonBasicImage);
+				easyButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false);
+				buttonEnteredMusic.start();
+
+				gameStart(nowSelected, "easy");
+				
+			}
+		});
+		add(easyButton);
+		
+		hardButton.setVisible(false);
+		hardButton.setBounds(655, 580, 250, 67);
+		hardButton.setBorderPainted(false);
+		hardButton.setContentAreaFilled(false);
+		hardButton.setFocusPainted(false);
+		hardButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				hardButton.setIcon(hardButtonEnteredImage);
+				hardButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				Music buttonEnteredMusic = new Music("buttonEnteredMusic.mp3", false);
+				buttonEnteredMusic.start();
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				hardButton.setIcon(hardButtonBasicImage);
+				hardButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false);
+				buttonEnteredMusic.start();
+				
+				gameStart(nowSelected, "hard");
+			}
+		});
+		add(hardButton);
 	}
 		
 	public void paint(Graphics g) {
@@ -307,5 +377,19 @@ public class HitTheNotes extends JFrame {
 		else
 			nowSelected++;
 		selectTrack(nowSelected);
+	}
+	
+	public void gameStart(int nowSelected, String difficulty) {
+		if(selectedMusic != null) 
+			selectedMusic.close();
+		
+		isMainScreen = false;
+		leftButton.setVisible(false);
+		rightButton.setVisible(false);
+		easyButton.setVisible(false);
+		hardButton.setVisible(false);
+		
+		background = new ImageIcon(Main.class.getResource("../images/" + trackList.get(nowSelected).getGameImage())).getImage();
+		
 	}
 }

@@ -37,6 +37,9 @@ public class HitTheNotes extends JFrame {
 	private ImageIcon hardButtonEnteredImage = new ImageIcon(Main.class.getResource("../images/hardButtonEntered.png"));
 	private ImageIcon hardButtonBasicImage = new ImageIcon(Main.class.getResource("../images/hardButtonBasic.png"));
 	
+	private ImageIcon backButtonEnteredImage = new ImageIcon(Main.class.getResource("../images/backButtonEntered.png"));
+	private ImageIcon backButtonBasicImage = new ImageIcon(Main.class.getResource("../images/backButtonBasic.png"));
+	
 	//백그라운드 이미지를 담는 인스턴스. 메인 클래스 위치를 기반으로 해서 이미지 변수에 jpg 이미지를 담아줌
 	private Image background = new ImageIcon(Main.class.getResource("../images/intro.jpg")).getImage();
 	
@@ -52,6 +55,8 @@ public class HitTheNotes extends JFrame {
 	private JButton easyButton = new JButton(easyButtonBasicImage);
 	private JButton hardButton = new JButton(hardButtonBasicImage);
 	
+	private JButton backButton = new JButton(backButtonBasicImage);
+	
 	private int mouseX, mouseY;
 		
 	private boolean isMainScreen = false;
@@ -62,6 +67,9 @@ public class HitTheNotes extends JFrame {
 	private Image selectedImage;
 	private Music selectedMusic;
 	private int nowSelected = 0;
+	
+	//프로그램 시작 시 배경음 삽입
+	Music introMusic = new Music("introMusic.mp3", true);
 	
 	public HitTheNotes() {
 		
@@ -74,9 +82,7 @@ public class HitTheNotes extends JFrame {
 		setVisible(true);
 		setBackground(new Color(0, 0, 0, 0));
 		setLayout(null);
-	
-		//프로그램 시작 시 배경음 삽입
-		Music introMusic = new Music("introMusic.mp3", true);
+		
 		introMusic.start();
 		
 		//선택 가능한 음악 목록 생성
@@ -164,22 +170,7 @@ public class HitTheNotes extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false);
 				buttonEnteredMusic.start();
-				
-				introMusic.close(); //프로그램 시작 시 실행된 음악 종료
-
-				startButton.setVisible(false);
-				quitButton.setVisible(false);
-				
-				leftButton.setVisible(true);
-				rightButton.setVisible(true);
-				
-				easyButton.setVisible(true);
-				hardButton.setVisible(true);
-				
-				selectTrack(0);
-				background = new ImageIcon(Main.class.getResource("../images/mainBackground2.jpg"))
-						.getImage();
-				isMainScreen = true;
+				enterMain();				
 			}
 		});
 		add(startButton);
@@ -329,6 +320,34 @@ public class HitTheNotes extends JFrame {
 			}
 		});
 		add(hardButton);
+		
+		backButton.setVisible(false);
+		backButton.setBounds(20, 50, 60, 60);
+		backButton.setBorderPainted(false);
+		backButton.setContentAreaFilled(false);
+		backButton.setFocusPainted(false);
+		backButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				backButton.setIcon(backButtonEnteredImage);
+				backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				Music buttonEnteredMusic = new Music("buttonEnteredMusic.mp3", false);
+				buttonEnteredMusic.start();
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				backButton.setIcon(backButtonBasicImage);
+				backButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false);
+				buttonEnteredMusic.start();
+				//메인 화면으로 돌아가는 이벤트
+				backMain();
+			}
+		});
+		add(backButton);
 	}
 		
 	public void paint(Graphics g) {
@@ -388,8 +407,42 @@ public class HitTheNotes extends JFrame {
 		rightButton.setVisible(false);
 		easyButton.setVisible(false);
 		hardButton.setVisible(false);
+		backButton.setVisible(true);
 		
 		background = new ImageIcon(Main.class.getResource("../images/" + trackList.get(nowSelected).getGameImage())).getImage();
 		
+	}
+	
+	public void backMain() {
+		isMainScreen = true;
+		
+		leftButton.setVisible(true);
+		rightButton.setVisible(true);
+		easyButton.setVisible(true);
+		hardButton.setVisible(true);
+		backButton.setVisible(false);
+		
+		background = new ImageIcon(Main.class.getResource("../images/mainBackground2.jpg")).getImage();
+		selectTrack(nowSelected);
+	}
+	
+	public void enterMain() {
+		
+		startButton.setVisible(false);
+		quitButton.setVisible(false);
+		
+		background = new ImageIcon(Main.class.getResource("../images/mainBackground2.jpg"))
+				.getImage();
+
+		isMainScreen = true;
+		
+		leftButton.setVisible(true);
+		rightButton.setVisible(true);
+		
+		easyButton.setVisible(true);
+		hardButton.setVisible(true);
+		
+		introMusic.close();
+		selectTrack(0);
 	}
 }

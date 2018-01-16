@@ -23,6 +23,19 @@ public class Game extends Thread {
 	private Image noteRouteKImage = new ImageIcon(Main.class.getResource("../images/noteRoute.png")).getImage();
 	private Image noteRouteLImage = new ImageIcon(Main.class.getResource("../images/noteRoute.png")).getImage();
 	
+	private String titleName;
+	private String difficulty;
+	private String musicTitle;
+	private Music gameMusic; 
+	
+	public Game(String titleName, String difficulty, String musicTitle) {
+		this.titleName = titleName;
+		this.difficulty = difficulty;
+		this.musicTitle = musicTitle;
+		gameMusic = new Music(this.musicTitle, false);
+		gameMusic.start();
+	}
+	
 	public void screenDraw(Graphics2D g) {
 		g.drawImage(noteRouteSImage, 228, 30, null);
 		g.drawImage(noteRouteDImage, 332, 30, null);
@@ -55,8 +68,8 @@ public class Game extends Thread {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Arial", Font.BOLD, 30));
-		g.drawString("Joakim Karud - Mighty Love", 20, 702);
-		g.drawString("Easy", 1190, 702);
+		g.drawString(titleName, 20, 702);
+		g.drawString(difficulty, 1190, 702);
 		g.setFont(new Font("Arial", Font.PLAIN, 26));
 		g.setColor(Color.DARK_GRAY);
 		g.drawString("S", 270, 609);
@@ -139,5 +152,10 @@ public class Game extends Thread {
 	@Override
 	public void run() {
 		
+	}
+	
+	public void close() {
+		gameMusic.close();
+		this.interrupt();
 	}
 }

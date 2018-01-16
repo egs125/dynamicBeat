@@ -73,7 +73,7 @@ public class HitTheNotes extends JFrame {
 	//프로그램 시작 시 배경음 삽입
 	Music introMusic = new Music("introMusic.mp3", true);
 	
-	public static Game game = new Game();
+	public static Game game;
 	
 	public HitTheNotes() {
 		
@@ -94,14 +94,13 @@ public class HitTheNotes extends JFrame {
 		//선택 가능한 음악 목록 생성
 		trackList.add(new Track("Mighty Love Title Image.png", "Mighty Love Start Image.png",
 								"Mighty Love Game Image.jpg", "Mighty Love Selected.mp3", 
-								"Joakim Karud - Mighty Love.mp3"));
+								"Joakim Karud - Mighty Love.mp3", "Mighty Love"));
 		trackList.add(new Track("Wild Flower Title Image.png", "Wild Flower Start Image.png",
 								"Wild Flower Game Image.jpg", "Wild Flower Selected.mp3", 
-								"Joakim Karud - Wild Flower.mp3"));
+								"Joakim Karud - Wild Flower.mp3", "Wild Flower"));
 		trackList.add(new Track("Energy Title Image.png", "Energy Start Image.png",
-								"Energy Game Image.jpg", "Energy Selected.mp3", 
-								"Bensound - Energy.mp3"));
-		
+								"Energy Game Image.png", "Energy Selected.mp3", 
+								"Bensound - Energy.mp3", "Energy"));
 
 		//메뉴바 상단의 닫기 버튼 추가
 		exitButton.setBounds(1245, 0, 30, 30);
@@ -293,7 +292,7 @@ public class HitTheNotes extends JFrame {
 				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false);
 				buttonEnteredMusic.start();
 
-				gameStart(nowSelected, "easy");
+				gameStart(nowSelected, "Easy");
 				
 			}
 		});
@@ -322,7 +321,7 @@ public class HitTheNotes extends JFrame {
 				Music buttonEnteredMusic = new Music("buttonPressedMusic.mp3", false);
 				buttonEnteredMusic.start();
 				
-				gameStart(nowSelected, "hard");
+				gameStart(nowSelected, "Hard");
 			}
 		});
 		add(hardButton);
@@ -424,6 +423,8 @@ public class HitTheNotes extends JFrame {
 		
 		isGameScreen = true;
 		setFocusable(true); //게임 화면에 키보드 포커스 맞춤
+		
+		game = new Game(trackList.get(nowSelected).getTitleName(), difficulty, trackList.get(nowSelected).getGameMusic());
 	}
 	
 	public void backMain() {
@@ -439,6 +440,8 @@ public class HitTheNotes extends JFrame {
 		selectTrack(nowSelected);
 		
 		isGameScreen = false;
+		
+		game.close(); //실행된 게임과 음악 종료
 	}
 	
 	public void enterMain() {

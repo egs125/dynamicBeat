@@ -35,8 +35,7 @@ public class Game extends Thread {
 		this.difficulty = difficulty;
 		this.musicTitle = musicTitle;
 		gameMusic = new Music(this.musicTitle, false);
-		gameMusic.start();
-		dropNotes(titleName);
+
 	}
 	
 	public void screenDraw(Graphics2D g) {
@@ -153,7 +152,7 @@ public class Game extends Thread {
 	
 	@Override
 	public void run() {
-		
+		dropNotes();
 	}
 	
 	public void close() {
@@ -161,10 +160,66 @@ public class Game extends Thread {
 		this.interrupt();
 	}
 	
-	public void dropNotes(String titleName) {		
-		Note note = new Note(228, "short");
-		note.start();
-		noteList.add(note);		
+	public void dropNotes() {	
+		Beat[] beats = null;
+		if(titleName.equals("Joakim Karud - Mighty Love")) {
+			int startTime = 4460 - Main.REACH_TIME * 1000;
+			int gap = 125;
+			beats = new Beat[] {
+					new Beat(startTime, "S"),
+					new Beat(startTime + gap * 2, "D"),
+					new Beat(startTime + gap * 4, "S"),
+					new Beat(startTime + gap * 6, "D"),
+					new Beat(startTime + gap * 8, "S"),
+					new Beat(startTime + gap * 10, "D"),
+					new Beat(startTime + gap * 16, "J"),
+					new Beat(startTime + gap * 18, "K"),
+					new Beat(startTime + gap * 24, "K"),
+					new Beat(startTime + gap * 26, "J"),
+					new Beat(startTime + gap * 28, "K"),
+					new Beat(startTime + gap * 30, "S"),
+					new Beat(startTime + gap * 32, "D"),
+					new Beat(startTime + gap * 38, "D"),
+					new Beat(startTime + gap * 40, "J"),
+					new Beat(startTime + gap * 44, "L"),
+					new Beat(startTime + gap * 46, "F"),
+					new Beat(startTime + gap * 48, "Space"),
+					new Beat(startTime + gap * 50, "L"),
+					new Beat(startTime + gap * 52, "F"),
+					new Beat(startTime + gap * 52, "Space"),
+					new Beat(startTime + gap * 52, "J")					
+			};
+		}else if(titleName.equals("Joakim Karud - Wild Flower")) {
+			int startTime = 1000 - Main.REACH_TIME * 1000;
+			beats = new Beat[] {
+					new Beat(startTime, "Space")
+			};
+		}else if(titleName.equals("Bensound - Energy")) {
+			int startTime = 1000 - Main.REACH_TIME * 1000;
+			beats = new Beat[] {
+					new Beat(startTime, "Space")
+			};
+		}
+			
+		int i = 0;
+		gameMusic.start();
+		while(i < beats.length & !isInterrupted()) {
+			boolean dropped = false;
+			if(beats[i].getTime() <= gameMusic.getTime()) {
+				Note note = new Note(beats[i].getNoteName());
+				note.start();
+				noteList.add(note);
+				i++;
+			}
+			
+			if(!dropped) {
+				try {
+					Thread.sleep(5);			
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}		
 	}
 
 }

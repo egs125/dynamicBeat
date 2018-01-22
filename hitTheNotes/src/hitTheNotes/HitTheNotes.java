@@ -77,6 +77,17 @@ public class HitTheNotes extends JFrame {
 	
 	public HitTheNotes() {
 		
+		//선택 가능한 음악 목록 생성
+		trackList.add(new Track("Mighty Love Title Image.png", "Mighty Love Start Image.png",
+								"Mighty Love Game Image.jpg", "Mighty Love Selected.mp3", 
+								"Joakim Karud - Mighty Love.mp3", "Joakim Karud - Mighty Love"));
+		trackList.add(new Track("Wild Flower Title Image.png", "Wild Flower Start Image.png",
+								"Wild Flower Game Image.jpg", "Wild Flower Selected.mp3", 
+								"Joakim Karud - Wild Flower.mp3", "Joakim Karud - Wild Flower"));
+		trackList.add(new Track("Energy Title Image.png", "Energy Start Image.png",
+								"Energy Game Image.png", "Energy Selected.mp3", 
+								"Bensound - Energy.mp3", "Bensound - Energy"));
+		
 		setUndecorated(true);
 		setTitle("Hit The Notes!!!!");
 		setSize(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
@@ -90,17 +101,6 @@ public class HitTheNotes extends JFrame {
 		addKeyListener(new KeyListener());
 		
 		introMusic.start();
-		
-		//선택 가능한 음악 목록 생성
-		trackList.add(new Track("Mighty Love Title Image.png", "Mighty Love Start Image.png",
-								"Mighty Love Game Image.jpg", "Mighty Love Selected.mp3", 
-								"Joakim Karud - Mighty Love.mp3", "Mighty Love"));
-		trackList.add(new Track("Wild Flower Title Image.png", "Wild Flower Start Image.png",
-								"Wild Flower Game Image.jpg", "Wild Flower Selected.mp3", 
-								"Joakim Karud - Wild Flower.mp3", "Wild Flower"));
-		trackList.add(new Track("Energy Title Image.png", "Energy Start Image.png",
-								"Energy Game Image.png", "Energy Selected.mp3", 
-								"Bensound - Energy.mp3", "Energy"));
 
 		//메뉴바 상단의 닫기 버튼 추가
 		exitButton.setBounds(1245, 0, 30, 30);
@@ -377,6 +377,11 @@ public class HitTheNotes extends JFrame {
 		}
 		
 		paintComponents(g); //메인프레임에 추가된 요소들을 보여줌(add 사용)
+		try {
+			Thread.sleep(5);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		this.repaint();
 	}
 	
@@ -422,9 +427,10 @@ public class HitTheNotes extends JFrame {
 		background = new ImageIcon(Main.class.getResource("../images/" + trackList.get(nowSelected).getGameImage())).getImage();
 		
 		isGameScreen = true;
-		setFocusable(true); //게임 화면에 키보드 포커스 맞춤
 		
 		game = new Game(trackList.get(nowSelected).getTitleName(), difficulty, trackList.get(nowSelected).getGameMusic());
+		game.start();
+		setFocusable(true); //게임 화면에 키보드 포커스 맞춤
 	}
 	
 	public void backMain() {
